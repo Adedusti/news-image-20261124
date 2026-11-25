@@ -34,8 +34,8 @@ if (png.length < 33 || png.subarray(12, 16).toString("latin1") !== "IHDR") {
 }
 const width = png.readUInt32BE(16);
 const height = png.readUInt32BE(20);
-if (width > MAX_SIDE || height > MAX_SIDE) {
-  fail(`dimensions ${width}x${height} exceed ${MAX_SIDE}x${MAX_SIDE}`);
+if (width !== MAX_SIDE || height !== MAX_SIDE) {
+  fail(`dimensions ${width}x${height} must be exactly ${MAX_SIDE}x${MAX_SIDE}`);
 }
 if (png.length < 12 || png.subarray(-8, -4).toString("latin1") !== "IEND") {
   fail("missing trailing IEND chunk");
@@ -52,4 +52,4 @@ const digest = (b: Buffer) => createHash("sha256").update(b).digest("hex");
 if (digest(copied) !== digest(png)) {
   fail("copied file does not match the shipped entry.png");
 }
-console.log(`wrote ${targetPath} (${copied.length} bytes, ${width}x${height})`);
+console.log(`wrote ${targetPath} (${copied.length} bytes, ${width}x${height}, sha256 ${digest(copied)})`);
